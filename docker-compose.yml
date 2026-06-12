@@ -1,0 +1,34 @@
+# docker-compose.yml
+version: "3.9"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=codebase_ai_2024
+    depends_on:
+      - neo4j
+    volumes:
+      - chroma_data:/app/chroma_db
+      - repo_data:/tmp/codebase_ai_repos
+
+  neo4j:
+    image: neo4j:5-community
+    ports:
+      - "7474:7474"   # Browser UI
+      - "7687:7687"   # Bolt protocol
+    environment:
+      - NEO4J_AUTH=neo4j/codebase_ai_2024
+    volumes:
+      - neo4j_data:/data
+
+volumes:
+  chroma_data:
+  repo_data:
+  neo4j_data:
